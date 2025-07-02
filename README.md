@@ -24,11 +24,6 @@ You can install the extension manually or via Firefox Add-ons (AMO) once it's pu
 4. Browse to the cloned folder and select the `manifest.json` file  
 The extension will now be active in your Firefox browser.
 
----
-
-Let me know if you'd like me to roll this into the full `README.md` or convert it into a Markdown list!
-   
-The extension will now be active in your Firefox browser.
 ⚙️ Usage & Configuration
 
 Settings are saved automatically and persist between sessions.
