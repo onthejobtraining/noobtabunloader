@@ -1,164 +1,163 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    :root {
-      --bg-color: #2a2a2e; --text-color: #e2e2e2; --text-color-secondary: #a0a0a0;
-      --header-border-color: #444; --primary-btn-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --secondary-btn-bg: #3a3a40; --secondary-btn-text: #e0e0e0; --secondary-btn-border: #555;
-      --list-bg: #333337; --list-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      --item-border-color: #444; --item-hover-bg: #404045; --settings-bg: #333337;
-      --accent-color: #667eea;
-    }
-    .light-theme {
-      --bg-color: #f0f2f5; --text-color: #333; --text-color-secondary: #555;
-      --header-border-color: #dcdcdc; --secondary-btn-bg: #e9ecef; --secondary-btn-text: #333;
-      --secondary-btn-border: #dcdcdc; --list-bg: #ffffff; --item-border-color: #f0f0f0;
-      --item-hover-bg: #f8f9fa; --settings-bg: #ffffff;
-      --accent-color: #764ba2;
-    }
-    body { width: 300px; padding: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--bg-color); color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease; display: flex; flex-direction: column; }
-    .header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--header-border-color); }
-    .header h1 { margin: 0; font-size: 15px; font-weight: 600; }
-    .header svg { width: 22px; height: 22px; fill: currentColor; }
-    .nav-tabs { display: flex; border-bottom: 1px solid var(--header-border-color); margin-bottom: 10px; }
-    .nav-tab { flex: 1; background: none; border: none; color: var(--text-color-secondary); padding: 8px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; border-bottom: 2px solid transparent; transition: all 0.2s ease; }
-    .nav-tab:hover { color: var(--text-color); }
-    .nav-tab.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
-    .nav-tab svg { width: 14px; height: 14px; fill: currentColor; }
-    .content-pane { display: none; }
-    .content-pane.active { display: block; }
-    .stats { display: flex; justify-content: space-around; margin-bottom: 10px; padding: 8px; border-radius: 6px; color: white; background: var(--primary-btn-bg); }
-    .stat { text-align: center; }
-    .stat-number { font-weight: bold; font-size: 15px; }
-    .stat-label { margin-top: 1px; font-size: 10px; opacity: 0.9; }
-    .buttons { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-    .button-row { display: flex; gap: 6px; }
-    .button-row > button { flex: 1; }
-    button { padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; }
-    button svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
-    .buttons > .button-row > button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-    .buttons > .button-row > button:active { transform: translateY(0px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .primary { background: var(--primary-btn-bg); color: white; }
-    .secondary { background: var(--secondary-btn-bg); color: var(--secondary-btn-text); border-color: var(--secondary-btn-border); }
-    .success { background: linear-gradient(135deg, #00695C 0%, #00897B 100%); color: white; }
-    .danger { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; }
-    .tab-list { max-height: 200px; overflow-y: auto; border-radius: 6px; background: var(--list-bg); box-shadow: var(--list-shadow); }
-    .tab-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px; padding: 7px 8px; border-bottom: 1px solid var(--item-border-color); font-size: 12px; }
-    .tab-item:last-child { border-bottom: none; }
-    .tab-favicon { width: 16px; height: 16px; flex-shrink: 0; }
-    .tab-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .tab-info-right { display: flex; align-items: center; gap: 6px; }
-    .status-text { font-size: 10px; color: var(--text-color-secondary); display: flex; align-items: center; gap: 4px; }
-    .status-indicator { width: 7px; height: 7px; border-radius: 50%; }
-    .status-active { background: #28a745; }
-    .status-unloaded { background: #888; }
-    .memory-badge { font-size: 10px; color: var(--text-color-secondary); }
-    .action-button { display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background-color 0.2s ease; background-color: transparent; }
-    .unload-btn { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #bbb; background-color: #4a4a50; border-radius: 5px; padding: 3px 6px; }
-    .light-theme .unload-btn { background-color: #e9ecef; color: #555;}
-    .reload-btn { width: 22px; height: 22px; border-radius: 50%; background-color: #28a745; }
-    .reload-btn svg { width: 12px; height: 12px; fill: white; }
-    .settings, .snapshot-container { padding: 10px; background: var(--settings-bg); border-radius: 6px; box-shadow: var(--list-shadow); }
-    .settings h3 { margin: 0 0 8px 0; font-size: 13px; font-weight: 600; }
-    .settings-divider { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--header-border-color); }
-    .setting-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-size: 11px; }
-    #undo-container { margin-top: 6px; }
-    #undo-button { width: 100%; background: #ffc107; color: #333; font-weight: bold; }
-    .auto-unload-time { display: flex; align-items: center; gap: 6px; color: var(--text-color-secondary); padding-left: 12px; margin-top: -2px; margin-bottom: 6px;}
-    textarea#whitelist { width: 95%; height: 60px; font-family: monospace; font-size: 11px; background: var(--secondary-btn-bg); color: var(--text-color); border: 1px solid var(--secondary-btn-border); border-radius: 4px; padding: 4px; margin-top: 4px; }
-    .snapshot-ui { display: flex; gap: 6px; margin-bottom: 10px; }
-    .snapshot-ui input[type="text"] { flex: 1; background: var(--secondary-btn-bg); border: 1px solid var(--secondary-btn-border); border-radius: 6px; padding: 8px; color: var(--text-color); font-size: 12px; }
-    .snapshot-list { max-height: 200px; overflow-y: auto; }
-    .snapshot-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 1px solid var(--item-border-color); }
-    .snapshot-item:last-child { border-bottom: none; }
-    .snapshot-name { font-size: 12px; font-weight: 500; }
-    .snapshot-controls button { padding: 4px 8px; font-size: 11px; }
-    .theme-options { display: flex; gap: 10px; }
-    .theme-option { display: flex; align-items: center; gap: 4px; }
-    .theme-option label { cursor: pointer; }
-
-    /* --- UI Compacting Rules --- */
-    .header {
-        margin-bottom: 8px; /* Was 10px */
-        padding-bottom: 6px; /* Was 8px */
-    }
-    .nav-tabs {
-        margin-bottom: 8px; /* Was 10px */
-    }
-    .setting-item {
-        margin-bottom: 4px; /* Was 6px */
-    }
-    .setting-item label {
-        line-height: 1.2; /* Tighter line height */
-    }
-    .settings h3 {
-        margin-bottom: 6px; /* Was 8px */
-    }
-    .settings-divider {
-        margin-top: 6px;    /* Was 8px */
-        padding-top: 6px;   /* Was 8px */
-    }
-    textarea#whitelist {
-        height: 45px; /* Was 60px, this is the biggest change */
-    }
-    .auto-unload-time {
-        margin-bottom: 4px; /* Was 6px */
-    }
-    /* --- End of UI Compacting Rules --- */
-
-  </style>
-</head>
-<body>
-  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;"><symbol id="icon-main" viewBox="0 0 16 16"><path d="M13.41,8.59c-1.55-1.55-4-2-5.78-1.53a4.72,4.72,0,0,0-4,4.45,4.52,4.52,0,0,0,.61,2.23A.5.5,0,0,0,5.1,13.3a2.37,2.37,0,0,1-.3-1.2,2.6,2.6,0,0,1,2.05-2.54c1-.26,2.78.26,3.92,1.4S14.28,14,14.07,15a.5.5,0,0,0,.95.31C15.72,13,15.22,10.38,13.41,8.59Z"/></symbol><symbol id="icon-bolt" viewBox="0 0 16 16"><path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.875-.414L6.31 9.5H2.5a.5.5 0 0 1-.395-.807l7-9z"/></symbol><symbol id="icon-folder" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .322-1.31z"/></symbol><symbol id="icon-fire" viewBox="0 0 16 16"><path d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.31.75 1 2 1 3.5 0 1.75-1.25 2.5-2.5 2.5C3.5 10 3 11.5 3 12.5 3 14 5 16 8 16z"/></symbol><symbol id="icon-reload-all" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></symbol><symbol id="icon-settings" viewBox="0 0 16 16"><path d="M8,11a3,3,0,1,1,3-3A3,3,0,0,1,8,11Zm6.42-3.46L13,6.23a4.34,4.34,0,0,0-1.23-1.23L10.46,3.58A.5.5,0,0,0,9.75,3.5L8.5,4.22a4.42,4.42,0,0,0-1,0L6.25,3.5a.5.5,0,0,0-.71.08L4.23,5A4.34,4.34,0,0,0,3,6.23L1.58,7.54a.5.5,0,0,0,0,.71L3,9.54a4.34,4.34,0,0,0,1.23,1.23l1.23,1.42a.5.5,0,0,0,.71,0l1.25-.72a4.42,4.42,0,0,0,1,0l1.25.72a.5.5,0,0,0,.71,0l1.23-1.42A4.34,4.34,0,0,0,13,9.54l1.42-1.29A.5.5,0,0,0,14.42,7.54Z"/></symbol><symbol id="icon-snapshot" viewBox="0 0 16 16"><path d="M12 2H2v12h12V4l-2-2zM9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM4 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5z"/></symbol><symbol id="icon-delete" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H4v-1a.5.5 0 0 1 .5-.5zM5 1.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/><path d="M7 4.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm3 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM2 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zM4.5 5.024l.588 8.232a.5.5 0 0 0 .496.444h5.832a.5.5 0 0 0 .496-.444L11.5 5.024H4.5z"/></symbol></svg>
-  
-  <div class="header">
-    <svg><use href="#icon-main"/></svg>
-    <h1>Tab Unloader</h1>
-  </div>
-  
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-target="#actions-pane"><svg><use href="#icon-bolt"/></svg>Actions</button>
-    <button class="nav-tab" data-target="#snapshots-pane"><svg><use href="#icon-snapshot"/></svg>Snapshots</button>
-    <button class="nav-tab" data-target="#settings-pane"><svg><use href="#icon-settings"/></svg>Settings</button>
-  </div>
-  
-  <div class="content-panes">
-    <div id="actions-pane" class="content-pane active">
-      <div class="stats"><div class="stat"><div class="stat-number" id="totalTabs">0</div><div class="stat-label">Total Tabs</div></div><div class="stat"><div class="stat-number" id="unloadedTabs">0</div><div class="stat-label">Unloaded</div></div><div class="stat"><div class="stat-number" id="memoryFreed">0MB</div><div class="stat-label">Memory Freed</div></div></div>
-      <div class="buttons"><div class="button-row"><button id="unloadCurrent" class="primary"><svg><use href="#icon-bolt"/></svg>Unload Current</button><button id="unloadOthers" class="success"><svg><use href="#icon-folder"/></svg>Unload Others</button></div><div class="button-row"><button id="unloadAll" class="danger"><svg><use href="#icon-fire"/></svg>Unload All</button><button id="reloadAll" class="secondary"><svg><use href="#icon-reload-all"/></svg>Reload All</button></div><div id="undo-container"></div></div>
-      <div class="tab-list" id="tabList"></div>
-    </div>
-    <div id="snapshots-pane" class="content-pane"><div class="snapshot-container"><h3>Save Current Session</h3><div class="snapshot-ui"><input type="text" id="snapshot-name-input" placeholder="Enter session name..."><button id="save-snapshot-button" class="primary">Save</button></div><div class="settings-divider"></div><h3>Saved Snapshots</h3><div class="snapshot-list" id="snapshot-list"></div></div></div>
+class TabUnloader {
+  constructor() {
+    this.SETTINGS_CONFIG = [
+        { id: 'preventStartupLoad', type: 'checkbox', defaultValue: true },
+        { id: 'theme', type: 'radio', defaultValue: 'auto' },
+        { id: 'autoUnload', type: 'checkbox', defaultValue: false },
+        { id: 'unloadMinutes', type: 'number', defaultValue: 30 },
+        { id: 'autoUnloadCount', type: 'number', defaultValue: 0 },
+        { id: 'excludePinned', type: 'checkbox', defaultValue: true },
+        { id: 'whitelist', type: 'textarea', defaultValue: '' },
+        { id: 'showMemory', type: 'checkbox', defaultValue: true },
+        { id: 'showUnloadCurrent', type: 'checkbox', defaultValue: true },
+        { id: 'showUnloadOthers', type: 'checkbox', defaultValue: true },
+        { id: 'showUnloadAll', type: 'checkbox', defaultValue: true },
+        { id: 'showReloadAll', type: 'checkbox', defaultValue: true }
+    ];
+    this.FRIENDLY_NAME_MAP = {
+        'mail.google.com': 'Gmail', 'google.com': 'Google', 'reddit.com': 'Reddit',
+        'youtube.com': 'YouTube', 'amazon.com': 'Amazon', 'flipkart.com': 'Flipkart',
+        'pricehistoryapp.com': 'Pricehistoryapp', 'spotify.com': 'Spotify'
+    };
+    this.INTERNAL_ICONS = {
+        'about:addons': 'data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"%3e%3cpath d="M14.5 8.5a1 1 0 0 0-1-1h-2v-2a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2h2a1 1 0 0 0 1-1zM3.5 0A3.5 3.5 0 0 0 0 3.5v5A3.5 3.5 0 0 0 3.5 12H4v1.5a2.5 2.5 0 0 0 2.5 2.5H8V12H3.5a.5.5 0 0 1-.5-.5v-5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5V8h4V3.5A3.5 3.5 0 0 0 9.5 0h-6z"/%3e%3c/svg%3e',
+        'fallback': 'data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23ddd"%3e%3crect width="16" height="16"/%3e%3c/svg%3e'
+    };
+    this.RELOAD_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2.5a5.5 5.5 0 1 0 4.71 8.63l.79.79A6.5 6.5 0 1 1 8 1.5V2.5z M12.5 8a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5h4.25c.41 0 .75.34.75.75z"/></svg>`;
     
-    <div id="settings-pane" class="content-pane">
-      <div class="settings">
-        <h3>General</h3>
-        <div class="setting-item"><label for="preventStartupLoad">Prevent tab loading on startup</label><input type="checkbox" id="preventStartupLoad"></div>
-        <div class="setting-item"><label for="autoUnload">Auto-unload inactive tabs</label><input type="checkbox" id="autoUnload"></div>
-        <div class="auto-unload-time" id="autoUnloadTime" style="display: none;"><span>After</span><input type="number" id="unloadMinutes" min="1" max="1440" value="30"><span>minutes</span></div>
-        <div class="setting-item"><label for="autoUnloadCount">Auto-unload if tabs exceed</label><input type="number" id="autoUnloadCount" min="0" value="20" style="width: 40px; text-align: center;"></div>
-        <div class="setting-item"><label for="excludePinned">Exclude pinned tabs</label><input type="checkbox" id="excludePinned"></div>
-        <div class="settings-divider"></div>
-        <h3>Whitelist</h3>
-        <label for="whitelist" style="font-size: 11px; color: var(--text-color-secondary);">Domains to never unload (one per line):</label><textarea id="whitelist" rows="4"></textarea>
-        <div class="settings-divider">
-          <h3>Appearance</h3>
-           <div class="setting-item"><label>Theme</label><div class="theme-options"><div class="theme-option"><input type="radio" id="theme-light" name="theme" value="light"><label for="theme-light">Light</label></div><div class="theme-option"><input type="radio" id="theme-dark" name="theme" value="dark"><label for="theme-dark">Dark</label></div><div class="theme-option"><input type="radio" id="theme-auto" name="theme" value="auto" checked><label for="theme-auto">Auto</label></div></div></div>
-           <div class="setting-item"><label for="showMemory">Show memory estimates</label><input type="checkbox" id="showMemory"></div>
-        </div>
-        <div class="settings-divider">
-          <h3>Customize Actions</h3>
-          <div class="setting-item"><label for="showUnloadCurrent">"Unload Current" button</label><input type="checkbox" id="showUnloadCurrent"></div>
-          <div class="setting-item"><label for="showUnloadOthers">"Unload Other" button</label><input type="checkbox" id="showUnloadOthers"></div>
-          <div class="setting-item"><label for="showUnloadAll">"Unload All" button</label><input type="checkbox" id="showUnloadAll"></div>
-          <div class="setting-item"><label for="showReloadAll">"Reload All" button</label><input type="checkbox" id="showReloadAll"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+    this.settings = {};
+    this.snapshots = {};
+    this.undoTimeout = null;
+
+    this.init();
+  }
   
-  <script src="popup.js"></script>
-</body>
-</html>
+  async init() {
+    this.setupTabs();
+    await this.loadSettingsFromStorage();
+    this.populateUIFromSettings();
+    await this.loadSnapshots();
+    await this.updateStats();
+    await this.renderTabList();
+    this.setupEventListeners();
+  }
+
+  setupTabs() {
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const contentPanes = document.querySelectorAll('.content-pane');
+    navTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            navTabs.forEach(t => t.classList.remove('active'));
+            contentPanes.forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            const targetPane = document.querySelector(tab.dataset.target);
+            if (targetPane) targetPane.classList.add('active');
+        });
+    });
+  }
+  
+  setupEventListeners() {
+    document.getElementById('unloadCurrent').addEventListener('click', () => this.handleUnloadAction('current'));
+    document.getElementById('unloadOthers').addEventListener('click', () => this.handleUnloadAction('others', true));
+    document.getElementById('unloadAll').addEventListener('click', () => this.handleUnloadAction('all', true));
+    document.getElementById('reloadAll').addEventListener('click', () => this.reloadAllTabs());
+    
+    document.getElementById('settings-pane').addEventListener('change', (e) => {
+        this.updateSettingsFromUI();
+        this.updateDynamicUI();
+        this.applyTheme();
+        this.saveSettingsToStorage();
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.applyTheme());
+    document.getElementById('save-snapshot-button').addEventListener('click', () => this.saveSnapshot());
+    document.getElementById('snapshot-list').addEventListener('click', (e) => {
+        const restoreBtn = e.target.closest('.snapshot-restore');
+        const deleteBtn = e.target.closest('.snapshot-delete');
+        if (restoreBtn) this.restoreSnapshot(restoreBtn.dataset.id);
+        if (deleteBtn) this.deleteSnapshot(deleteBtn.dataset.id);
+    });
+  }
+
+  async loadSettingsFromStorage() {
+    const defaultSettings = this.SETTINGS_CONFIG.reduce((acc, {id, defaultValue}) => ({ ...acc, [id]: defaultValue }), {});
+    this.settings = await browser.storage.local.get(defaultSettings);
+  }
+
+  populateUIFromSettings() {
+    this.SETTINGS_CONFIG.forEach(({ id, type }) => {
+        if (type === 'radio') {
+            const radioToCheck = document.querySelector(`input[name="${id}"][value="${this.settings[id]}"]`);
+            if (radioToCheck) radioToCheck.checked = true;
+        } else {
+            const element = document.getElementById(id);
+            if (element) {
+                if (type === 'checkbox') element.checked = this.settings[id];
+                else element.value = this.settings[id];
+            }
+        }
+    });
+    this.applyTheme();
+    this.updateDynamicUI();
+  }
+
+  updateSettingsFromUI() {
+      this.SETTINGS_CONFIG.forEach(({ id, type }) => {
+          if (type === 'radio') {
+              const checkedRadio = document.querySelector(`input[name="${id}"]:checked`);
+              if (checkedRadio) this.settings[id] = checkedRadio.value;
+          } else {
+              const element = document.getElementById(id);
+              if (element) {
+                  if (type === 'checkbox') this.settings[id] = element.checked;
+                  else if (type === 'textarea') this.settings[id] = element.value;
+                  else this.settings[id] = parseInt(element.value, 10) || 0;
+              }
+          }
+      });
+  }
+
+  async saveSettingsToStorage() {
+    await browser.storage.local.set(this.settings);
+    await browser.runtime.sendMessage({ action: 'updateSettings', settings: this.settings });
+  }
+
+  updateDynamicUI() {
+    document.getElementById('autoUnloadTime').style.display = this.settings.autoUnload ? 'flex' : 'none';
+    
+    ['showUnloadCurrent', 'showUnloadOthers', 'showUnloadAll', 'showReloadAll'].forEach(settingKey => {
+        const buttonId = settingKey.replace('show', '').charAt(0).toLowerCase() + settingKey.slice(5);
+        const button = document.getElementById(buttonId);
+        if(button) button.style.display = this.settings[settingKey] ? 'flex' : 'none';
+    });
+    const topRow = document.querySelector('.button-row:first-child');
+    if (topRow) topRow.style.display = (this.settings.showUnloadCurrent || this.settings.showUnloadOthers) ? 'flex' : 'none';
+    const bottomRow = document.querySelector('.button-row:last-child');
+    if (bottomRow) bottomRow.style.display = (this.settings.showUnloadAll || this.settings.showReloadAll) ? 'flex' : 'none';
+  }
+
+  applyTheme() {
+    document.body.classList.remove('light-theme', 'dark-theme');
+    const useDark = this.settings.theme === 'dark' || (this.settings.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.body.classList.add(useDark ? 'dark-theme' : 'light-theme');
+  }
+
+  // The rest of popup.js is unchanged and correct.
+  async updateStats() { const tabs = await browser.tabs.query({}); const unloadedCount = tabs.filter(tab => tab.discarded).length; document.getElementById('totalTabs').textContent = tabs.length; document.getElementById('unloadedTabs').textContent = unloadedCount; document.getElementById('memoryFreed').textContent = `${unloadedCount * 50}MB`; }
+  async renderTabList() { const tabList = document.getElementById('tabList'); tabList.style.display = 'block'; while (tabList.firstChild) tabList.removeChild(tabList.firstChild); const tabs = await browser.tabs.query({ active: false, windowType: 'normal' }); if (tabs.length > 0) { tabs.forEach(tab => { const tabElement = this._createTabItemElement(tab); tabList.appendChild(tabElement); }); } else { const emptyMessage = document.createElement('div'); emptyMessage.style.cssText = 'padding: 12px; text-align: center; font-size: 11px; color: var(--text-color-secondary);'; emptyMessage.textContent = 'No other tabs open'; tabList.appendChild(emptyMessage); } }
+  _createTabItemElement(tab) { const item = document.createElement('div'); item.className = 'tab-item'; item.dataset.tabId = tab.id; const favicon = document.createElement('img'); favicon.className = 'tab-favicon'; favicon.src = this._getIconForTab(tab); favicon.onerror = () => { favicon.src = this.INTERNAL_ICONS.fallback; }; const title = document.createElement('span'); title.className = 'tab-title'; title.title = tab.title; title.textContent = this._cleanTabTitle(tab.title, tab.url); const infoRight = this._getStatusAndActionElement(tab); item.appendChild(favicon); item.appendChild(title); item.appendChild(infoRight); return item; }
+  _getStatusAndActionElement(tab) { const container = document.createElement('div'); container.className = 'tab-info-right'; const statusText = document.createElement('span'); statusText.className = 'status-text'; const indicator = document.createElement('div'); indicator.className = 'status-indicator'; let actionButton; if (tab.discarded) { if (this.settings.showMemory) { const memoryBadge = document.createElement('span'); memoryBadge.className = 'memory-badge'; memoryBadge.textContent = '~50MB'; container.appendChild(memoryBadge); } indicator.classList.add('status-unloaded'); statusText.textContent = 'Unloaded'; actionButton = document.createElement('button'); actionButton.className = 'action-button reload-btn'; actionButton.title = 'Reload tab'; actionButton.innerHTML = this.RELOAD_ICON_SVG; } else { indicator.classList.add('status-active'); statusText.textContent = 'Loaded'; actionButton = document.createElement('button'); actionButton.className = 'action-button unload-btn'; actionButton.textContent = 'UNLOAD'; } statusText.prepend(indicator); container.appendChild(statusText); container.appendChild(actionButton); actionButton.addEventListener('click', (e) => this.handleTabAction(e)); return container; }
+  async handleTabAction(e) { e.stopPropagation(); const button = e.currentTarget; const tabItem = button.closest('.tab-item'); const tabId = parseInt(tabItem.dataset.tabId, 10); button.disabled = true; if (button.classList.contains('reload-btn')) { await browser.tabs.reload(tabId); } else { await browser.runtime.sendMessage({ action: 'unloadTab', tabId: tabId }); } setTimeout(async () => { try { const updatedTab = await browser.tabs.get(tabId); const newTabItemElement = this._createTabItemElement(updatedTab); tabItem.replaceWith(newTabItemElement); } catch(e) { tabItem.remove(); } this.updateStats(); }, 300); }
+  async handleUnloadAction(type, showUndo = false) { const commandMap = { current: 'unload-current-tab', others: 'unload-others', all: 'unload-all' }; if (commandMap[type]) { const unloadedTabIds = await browser.runtime.sendMessage({ action: 'executeCommand', command: commandMap[type] }); if (showUndo && unloadedTabIds && unloadedTabIds.length > 0) { this.showUndoButton(unloadedTabIds); } else if (!showUndo) { setTimeout(() => window.close(), 100); } } setTimeout(() => { this.updateStats(); this.renderTabList(); }, 300); }
+  showUndoButton(tabIds) { const undoContainer = document.getElementById('undo-container'); clearTimeout(this.undoTimeout); const undoButton = document.createElement('button'); undoButton.id = 'undo-button'; undoButton.textContent = `Undo Unload (${tabIds.length})`; undoButton.onclick = async () => { await browser.runtime.sendMessage({ action: 'reloadTabs', tabIds }); undoContainer.innerHTML = ''; clearTimeout(this.undoTimeout); await this.updateStats(); await this.renderTabList(); }; undoContainer.innerHTML = ''; undoContainer.appendChild(undoButton); this.undoTimeout = setTimeout(() => { undoContainer.innerHTML = ''; }, 7000); }
+  async reloadAllTabs() { const tabs = await browser.tabs.query({discarded: true}); await Promise.all(tabs.map(tab => browser.tabs.reload(tab.id))); setTimeout(() => window.close(), 100); }
+  async loadSnapshots() { const data = await browser.storage.local.get('snapshots'); this.snapshots = data.snapshots || {}; this.renderSnapshots(); }
+  renderSnapshots() { const list = document.getElementById('snapshot-list'); while(list.firstChild) list.removeChild(list.firstChild); if (Object.keys(this.snapshots).length === 0) { const emptyMessage = document.createElement('div'); emptyMessage.style.cssText = 'padding: 12px; text-align: center; font-size: 11px; color: var(--text-color-secondary);'; emptyMessage.textContent = 'No saved snapshots'; list.appendChild(emptyMessage); return; } Object.entries(this.snapshots).forEach(([id, snapshot]) => { const item = document.createElement('div'); item.className = 'snapshot-item'; const name = document.createElement('span'); name.className = 'snapshot-name'; name.textContent = `${snapshot.name} (${snapshot.tabs.length} tabs)`; const controls = document.createElement('div'); controls.className = 'snapshot-controls'; const restoreBtn = document.createElement('button'); restoreBtn.className = 'snapshot-restore success'; restoreBtn.dataset.id = id; restoreBtn.textContent = 'Restore'; const deleteBtn = document.createElement('button'); deleteBtn.className = 'snapshot-delete danger'; deleteBtn.dataset.id = id; deleteBtn.innerHTML = '<svg style="width:12px; height:12px;"><use href="#icon-delete"/></svg>'; controls.appendChild(restoreBtn); controls.appendChild(deleteBtn); item.appendChild(name); item.appendChild(controls); list.appendChild(item); }); }
+  async saveSnapshot() { const nameInput = document.getElementById('snapshot-name-input'); let name = nameInput.value.trim(); if (!name) name = `Session - ${new Date().toLocaleDateString()}`; const tabs = await browser.tabs.query({ currentWindow: true, pinned: false }); const snapshotId = `snap_${Date.now()}`; this.snapshots[snapshotId] = { name, tabs: tabs.map(t => ({ url: t.url, title: t.title })) }; await browser.storage.local.set({ snapshots: this.snapshots }); nameInput.value = ''; this.renderSnapshots(); }
+  async restoreSnapshot(id) { const snapshot = this.snapshots[id]; if (snapshot) { for (const tab of snapshot.tabs) { await browser.tabs.create({ url: tab.url, active: false }); } } }
+  async deleteSnapshot(id) { delete this.snapshots[id]; await browser.storage.local.set({ snapshots: this.snapshots }); this.renderSnapshots(); }
+  _getIconForTab(tab) { for (const urlPrefix in this.INTERNAL_ICONS) { if (tab.url && tab.url.startsWith(urlPrefix)) return this.INTERNAL_ICONS[urlPrefix]; } return tab.favIconUrl || this.INTERNAL_ICONS.fallback; }
+  _cleanTabTitle(title, url) { const internalPageTitles = { 'about:debugging': 'Debugging', 'about:addons': 'Add-ons Manager', 'about:processes': 'Process Manager', 'about:profiles': 'About Profiles', 'about:newtab': 'New Tab', }; if (url && url.startsWith('about:')) return internalPageTitles[url] || title; try { const hostname = new URL(url).hostname.replace(/^www\./, ''); if (this.FRIENDLY_NAME_MAP[hostname]) return this.FRIENDLY_NAME_MAP[hostname]; const domainParts = hostname.split('.'); if (domainParts.length >= 2) { const mainDomain = domainParts[domainParts.length - 2]; return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1); } return hostname; } catch (e) { return title || 'Unknown Tab'; } }
+}
+
+document.addEventListener('DOMContentLoaded', () => new TabUnloader());
