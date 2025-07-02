@@ -1,17 +1,45 @@
 # 💤 Tab Unloader for Firefox
 
-Tab Unloader is a lightweight Firefox extension that helps reduce memory usage by unloading inactive tabs automatically after a defined period. Inspired by browser efficiency tools, it's perfect for tab hoarders who want to keep their workflow tidy and their system fast.
+Tab Unloader is a lightweight Firefox extension that automatically unloads inactive tabs after a user-defined time period. It helps free up memory and improves performance without requiring users to close tabs manually.
 
 ## 🚀 Features
-- Automatically unloads tabs after a customizable period of inactivity
-- Keeps pinned tabs and audible tabs loaded (optional)
-- Minimizes RAM usage without closing your tabs
-- Works silently in the background with minimal permissions
 
-## 🛠️ Installation
+- Unload tabs after a customizable period of inactivity
+- Whitelist domains you never want to unload
+- Optionally exclude pinned and media-playing tabs
+- Reduces memory footprint and improves browser responsiveness
+- Minimal permissions and no background spying
 
-You can install Tab Unloader from [addons.mozilla.org](https://addons.mozilla.org) (link coming soon) or load it manually for development:
+## 🔧 Installation
 
-1. Download or clone this repository:
+You can install the extension manually or via Firefox Add-ons (AMO) once it's published.
+
+### Manual Installation for Development
+
+1. Clone this repo:
    ```bash
    git clone https://github.com/onthejobtraining/tabunloader.git
+2. Open Firefox and go to `about:debugging#/runtime/this-firefox`  
+3. Click **"Load Temporary Add-on"**  
+4. Browse to the cloned folder and select the `manifest.json` file  
+The extension will now be active in your Firefox browser.
+
+---
+
+Let me know if you'd like me to roll this into the full `README.md` or convert it into a Markdown list!
+   
+The extension will now be active in your Firefox browser.
+⚙️ Usage & Configuration
+
+Settings are saved automatically and persist between sessions.
+💡 Why Use Tab Unloader?
+If you're someone who opens dozens of tabs but doesn't want to close them, Tab Unloader helps manage memory usage behind the scenes. It’s especially helpful for:
+
+🧪 Development
+Feel free to submit issues or pull requests! Contributions are welcome.
+To Build/Package:
+
+📄 License
+This project is licensed under the MIT License.
+
+Made with ☕ and care by @onthejobtraining. Happy tabbing!
