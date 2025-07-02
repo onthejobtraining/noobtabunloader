@@ -1,15 +1,14 @@
 {
   "manifest_version": 2,
   "name": "Tab Unloader",
-  "version": "2.2",
+  "version": "12.0",
   "description": "Unload tabs, save sessions, and manage memory with advanced controls.",
   "author": "Noobmaster",
-  "homepage_url": "https://github.com/hehehe",
+  "homepage_url": "https://github.com/onthejobtraining/tabunloader",
 
   "permissions": [
     "tabs",
     "storage",
-    "activeTab",
     "alarms"
   ],
   
@@ -17,7 +16,7 @@
     "scripts": [
       "background.js"
     ],
-    "persistent": false
+    "persistent": true
   },
   
   "browser_action": {
@@ -38,11 +37,18 @@
       },
       "description": "Unload current tab"
     },
-    "unload-all-tabs": {
+    "unload-all": {
       "suggested_key": {
         "default": "Ctrl+Shift+A"
       },
-      "description": "Unload all tabs except active"
+      "description": "Unload all tabs"
+    }
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{a08e22d5-4675-48bc-8efa-6d0c39e8e001}",
+      "strict_min_version": "131.0"
     }
   }
 }
