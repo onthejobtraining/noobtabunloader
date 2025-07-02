@@ -1,4 +1,4 @@
-# 💤 Tab Unloader for Firefox
+# 💤 Noob Tab Unloader for Firefox
 
 Tab Unloader is a lightweight Firefox extension that automatically unloads inactive tabs after a user-defined time period. It helps free up memory and improves performance without requiring users to close tabs manually.
 
