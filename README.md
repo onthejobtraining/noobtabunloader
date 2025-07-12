@@ -19,14 +19,9 @@ You can install the extension manually by downloading the source code and compil
 
 Settings are saved automatically and persist between sessions.
 
-💡 Why Use Tab Unloader?
-
-If you're someone who opens dozens of tabs but doesn't want to close them, Tab Unloader helps manage memory usage behind the scenes. It’s especially helpful for:
-
 🧪 Development
 
 Feel free to submit issues or pull requests! Contributions are welcome.
-To Build/Package:
 
 📄 License
 
