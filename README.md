@@ -12,17 +12,8 @@ Tab Unloader is a lightweight Firefox extension that automatically unloads inact
 
 ## 🔧 Installation
 
-You can install the extension manually or via Firefox Add-ons (AMO) once it's published.
+You can install the extension manually by downloading the source code and compiling yourself, or via Firefox Add-ons: https://addons.mozilla.org/en-US/firefox/addon/tab-unloader-manager/
 
-### Manual Installation for Development
-
-1. Clone this repo:
-   ```bash
-   git clone https://github.com/onthejobtraining/tabunloader.git
-2. Open Firefox and go to `about:debugging#/runtime/this-firefox`  
-3. Click **"Load Temporary Add-on"**  
-4. Browse to the cloned folder and select the `manifest.json` file  
-The extension will now be active in your Firefox browser.
 
 ⚙️ Usage & Configuration
 
